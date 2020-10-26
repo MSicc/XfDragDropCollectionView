@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DragDropTest.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:DragDropTest.Controls"
+    xmlns:local="clr-namespace:DragDropTest"
+    xmlns:vm="clr-namespace:DragDropTest.ViewModels"
+    x:DataType="vm:MainViewModel">
+
+
+
+    <StackLayout BackgroundColor="HotPink">
+        <Grid>
+            <!--
+                Android does not recognize/support? the gesture recognizers directly on CollectionView
+                wrapping it into a panel is a workaround...
+            -->
+            <Grid.GestureRecognizers>
+                <DropGestureRecognizer
+                    AllowDrop="True"
+                    DragOverCommand="{Binding TopCollection.DragOverCommand}"
+                    DragOverCommandParameter="{Binding TopCollection}"
+                    DropCommand="{Binding TopCollection.DropCommand}"
+                    DropCommandParameter="{Binding TopCollection}" />
+            </Grid.GestureRecognizers>
+            <controls:CollectionViewEx
+                x:Name="TestCollectionView"
+                Margin="10,20"
+                BackgroundColor="LightBlue"
+                EmptyView="Empty CollectionView"
+                ItemsSource="{Binding TopCollection.ItemVms}"
+                ItemsUpdatingScrollMode="KeepScrollOffset"
+                ScrollToItemWithConfig="{Binding TopCollection.ScrollToVm}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame
+                            Margin="5"
+                            x:DataType="vm:ItemViewModel"
+                            BackgroundColor="AliceBlue"
+                            BindingContext="{Binding .}"
+                            BorderColor="Black"
+                            CornerRadius="5"
+                            IsClippedToBounds="True">
+                            <Frame.GestureRecognizers>
+                                <DragGestureRecognizer
+                                    CanDrag="{Binding EnableDrag}"
+                                    DragStartingCommand="{Binding DragStartingCommand}"
+                                    DragStartingCommandParameter="{Binding .}"
+                                    DropCompletedCommand="{Binding DropCompletedCommand}"
+                                    DropCompletedCommandParameter="{Binding .}" />
+                                <DropGestureRecognizer
+                                    AllowDrop="{Binding AllowDrop}"
+                                    DragOverCommand="{Binding DragOverCommand}"
+                                    DragOverCommandParameter="{Binding .}"
+                                    DropCommand="{Binding DropCommand}"
+                                    DropCommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <Grid>
+                                <Label
+                                    Margin="5"
+                                    Text="{Binding Title}"
+                                    TextColor="Black" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </controls:CollectionViewEx>
+        </Grid>
+
+
+        <Grid>
+            <!--
+                Android does not recognize/support? the gesture recognizers directly on CollectionView
+                wrapping it into a panel is a workaround...
+            -->
+            <Grid.GestureRecognizers>
+                <DropGestureRecognizer
+                    AllowDrop="True"
+                    DragOverCommand="{Binding BottomCollection.DragOverCommand}"
+                    DragOverCommandParameter="{Binding BottomCollection}"
+                    DropCommand="{Binding BottomCollection.DropCommand}"
+                    DropCommandParameter="{Binding BottomCollection}" />
+            </Grid.GestureRecognizers>
+            <controls:CollectionViewEx
+                x:Name="TestCollectionView2"
+                Margin="10,20"
+                BackgroundColor="LightGreen"
+                EmptyView="Empty CollectionView 2"
+                ItemsSource="{Binding BottomCollection.ItemVms}"
+                ItemsUpdatingScrollMode="KeepScrollOffset"
+                ScrollToItemWithConfig="{Binding BottomCollection.ScrollToVm}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame
+                            Margin="5"
+                            x:DataType="vm:ItemViewModel"
+                            BackgroundColor="Azure"
+                            BindingContext="{Binding .}"
+                            BorderColor="Black"
+                            CornerRadius="5"
+                            IsClippedToBounds="True">
+                            <Frame.GestureRecognizers>
+                                <DragGestureRecognizer
+                                    CanDrag="{Binding EnableDrag}"
+                                    DragStartingCommand="{Binding DragStartingCommand}"
+                                    DragStartingCommandParameter="{Binding .}"
+                                    DropCompletedCommand="{Binding DropCompletedCommand}"
+                                    DropCompletedCommandParameter="{Binding .}" />
+                                <DropGestureRecognizer
+                                    AllowDrop="{Binding AllowDrop}"
+                                    DragOverCommand="{Binding DragOverCommand}"
+                                    DragOverCommandParameter="{Binding .}"
+                                    DropCommand="{Binding DropCommand}"
+                                    DropCommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <Grid>
+                                <Label
+                                    Margin="5"
+                                    Text="{Binding Title}"
+                                    TextColor="Black" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </controls:CollectionViewEx>
+        </Grid>
+
+    </StackLayout>
+
+</ContentPage>
