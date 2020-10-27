@@ -14,7 +14,7 @@ namespace DragDropTest.ViewModels
     public class DropCollectionViewModel : ObservableObject, IDrop
     {
         public event EventHandler HasBeenSelectedAsDropTarget;
-        public event EventHandler<object> HasItemDraggingOver;
+        public event EventHandler<DropCollectionViewModel> HasItemDraggingOver;
 
         private bool _allowDrop;
 
@@ -46,7 +46,7 @@ namespace DragDropTest.ViewModels
             }
         }
 
-        public void ExecuteDraggingOver(object o) => this.HasItemDraggingOver?.Invoke(this, o);
+        public void ExecuteDraggingOver(object o) => this.HasItemDraggingOver?.Invoke(this, (DropCollectionViewModel)o);
 
         public void ExecuteDrop(object o)
         {

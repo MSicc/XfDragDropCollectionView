@@ -24,7 +24,7 @@ namespace DragDropTest.ViewModels
 
         public event EventHandler<ItemViewModel> HasStartedDragging;
         public event EventHandler<ItemViewModel> HasBeenDropped;
-        public event EventHandler<object> HasItemDraggingOver;
+        public event EventHandler<ItemViewModel> HasItemDraggingOver;
         public event EventHandler HasBeenSelectedAsDropTarget;
 
         public ItemViewModel(string title, int order, bool enableDrag, bool allowDrop, DropCollectionViewModel parent)
