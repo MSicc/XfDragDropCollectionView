@@ -24,11 +24,14 @@ namespace DragDropTest.ViewModels
 
             for (int i = 0; i < 10; i++)
             {
-                this.TopCollection.ItemVms.Add(new ItemViewModel($"Item {i}", i, true, true, this.TopCollection));
-                foreach (var item in this.TopCollection.ItemVms)
+                var itemVm = new ItemViewModel($"Item {i}", true, true, this.TopCollection);
+                this.TopCollection.Items.Add(itemVm);
+
+                foreach (ItemViewModel item in this.TopCollection.Items)
                 {
                     item.HasStartedDragging += HandleAnItemVmIsBeingDragged;
                     item.HasBeenDropped += HandleAnItemHasBeenDropped;
+
                     item.HasItemDraggingOver += HandleDropTargetHasItemDraggingOver;
                     item.HasBeenSelectedAsDropTarget += HandleDropTargetHasBeenSelected;
                 }
@@ -46,32 +49,32 @@ namespace DragDropTest.ViewModels
                 if (this.CurrentDraggingItemVm != null)
                 {
                     //preventing any action if we are not dragging far enough
-                    if (itemVm.Parent == this.CurrentDraggingItemVm.Parent &&
+                    if (itemVm.ParentCollection == this.CurrentDraggingItemVm.ParentCollection &&
                         itemVm.Order == this.CurrentDraggingItemVm.Order)
                     {
                         this.CurrentDraggingItemVm = null;
                         return;
                     }
 
-                    this.CurrentDraggingItemVm.Parent.ItemVms.Remove(this.CurrentDraggingItemVm);
+                    this.CurrentDraggingItemVm.ParentCollection.Items.Remove(this.CurrentDraggingItemVm);
 
 
-                    if (itemVm.Parent != this.CurrentDraggingItemVm.Parent) //different parent
+                    if (itemVm.ParentCollection != this.CurrentDraggingItemVm.ParentCollection) //different parent
                     {
-                        if (itemVm == itemVm.Parent.ItemVms.Last())
-                            itemVm.Parent.ItemVms.Add(this.CurrentDraggingItemVm);
+                        if (itemVm == itemVm.ParentCollection.Items.Last())
+                            itemVm.ParentCollection.Items.Add(this.CurrentDraggingItemVm);
                         else
-                            itemVm.Parent.ItemVms.Insert(itemVm.Order, this.CurrentDraggingItemVm);
+                            itemVm.ParentCollection.Items.Insert(itemVm.Order, this.CurrentDraggingItemVm);
                     }
                     else //same parent
                     {
                         if (itemVm.Order == this.CurrentDraggingItemVm.Order)
-                            itemVm.Parent.ItemVms.Insert(itemVm.Order + 1, this.CurrentDraggingItemVm);
-                        else if (itemVm == itemVm.Parent.ItemVms.Last() &&
-                            this.CurrentDraggingItemVm.Order < itemVm.Parent.ItemVms.Count)
-                            itemVm.Parent.ItemVms.Add(this.CurrentDraggingItemVm);
+                            itemVm.ParentCollection.Items.Insert(itemVm.Order + 1, this.CurrentDraggingItemVm);
+                        else if (itemVm == itemVm.ParentCollection.Items.Last() &&
+                            this.CurrentDraggingItemVm.Order < itemVm.ParentCollection.Items.Count)
+                            itemVm.ParentCollection.Items.Add(this.CurrentDraggingItemVm);
                         else
-                            itemVm.Parent.ItemVms.Insert(itemVm.Order, this.CurrentDraggingItemVm);
+                            itemVm.ParentCollection.Items.Insert(itemVm.Order, this.CurrentDraggingItemVm);
                     }
                 }
             }
@@ -80,8 +83,8 @@ namespace DragDropTest.ViewModels
             {
                 if (this.CurrentDraggingItemVm != null)
                 {
-                    this.CurrentDraggingItemVm.Parent.ItemVms.Remove(this.CurrentDraggingItemVm);
-                    dropCollectionVm.ItemVms.Add(this.CurrentDraggingItemVm);
+                    this.CurrentDraggingItemVm.ParentCollection.Items.Remove(this.CurrentDraggingItemVm);
+                    dropCollectionVm.Items.Add(this.CurrentDraggingItemVm);
                 }
             }
 
@@ -92,16 +95,16 @@ namespace DragDropTest.ViewModels
 
         private void HandleDropTargetHasItemDraggingOver(object sender, object args)
         {
-
+            //perform any actions related to dragging over
         }
 
-        private void HandleAnItemHasBeenDropped(object sender, ItemViewModel args)
+        private void HandleAnItemHasBeenDropped(object sender, IDrag args)
         {
             //perform any action after all drag and drop actions have finished
         }
 
-        private void HandleAnItemVmIsBeingDragged(object sender, ItemViewModel args) =>
-            this.CurrentDraggingItemVm = args;
+        private void HandleAnItemVmIsBeingDragged(object sender, IDrag args) =>
+            this.CurrentDraggingItemVm = (ItemViewModel)args;
 
 
         public DropCollectionViewModel TopCollection { get; set; }

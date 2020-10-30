@@ -7,7 +7,12 @@ namespace DragDropTest.Interfaces
 {
     public interface IDrop
     {
+        event EventHandler<IDrop> HasItemDraggingOver;
+        event EventHandler HasBeenSelectedAsDropTarget;
+
         bool AllowDrop { get; set; }
+
+        bool IsCurrentDropTarget { get; }
 
         ICommand DragOverCommand { get; }
 

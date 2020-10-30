@@ -1,4 +1,5 @@
-﻿using DragDropTest.Interfaces;
+﻿using DragDropTest.Controls;
+using DragDropTest.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,64 +12,40 @@ using Xamarin.Forms;
 
 namespace DragDropTest.ViewModels
 {
-    public class DropCollectionViewModel : ObservableObject, IDrop
+    public class DropCollectionViewModel : DropCollectionViewModelBase
     {
-        public event EventHandler HasBeenSelectedAsDropTarget;
-        public event EventHandler<DropCollectionViewModel> HasItemDraggingOver;
-
-        private bool _allowDrop;
-
-        private Command _dropCommand;
-        private Command _dragOverCommand;
-        private ItemViewModel _scrollToVm;
-
-        private bool _isCurrentDropTarget;
+        private IScrollItem _scrollToVm;
 
         public DropCollectionViewModel()
         {
-            this.ItemVms = new ObservableCollection<ItemViewModel>();
-            this.ItemVms.CollectionChanged += ItemVmsCollectionChanged;
+            this.AllowDrop = true;
         }
 
-        private void ItemVmsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public override void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var itemVm in this.ItemVms)
-            {
-                itemVm.Parent = this;
-                itemVm.Order = this.ItemVms.IndexOf(itemVm);
-            }
+            base.OnItemsCollectionChanged(sender, e);
 
-            if (e.Action == NotifyCollectionChangedAction.Add && _isCurrentDropTarget)
+            if (e.Action == NotifyCollectionChangedAction.Add && this.IsCurrentDropTarget)
             {
-                this.ScrollToVm = this.ItemVms[e.NewStartingIndex];
+                this.ScrollToVm = (IScrollItem)this.Items[e.NewStartingIndex];
 
-                _isCurrentDropTarget = false;
+                this.IsCurrentDropTarget = false;
             }
         }
 
-        public void ExecuteDraggingOver(object o) => this.HasItemDraggingOver?.Invoke(this, (DropCollectionViewModel)o);
 
-        public void ExecuteDrop(object o)
+        public override void ExecuteDraggingOver(object o)
         {
-            this._isCurrentDropTarget = true;
-            this.HasBeenSelectedAsDropTarget?.Invoke(this, EventArgs.Empty);
+            base.ExecuteDraggingOver(o);
         }
 
-        public ObservableCollection<ItemViewModel> ItemVms { get; set; }
-
-        public ItemViewModel ScrollToVm
+        public override void ExecuteDrop(object o)
         {
-            get => _scrollToVm;
-            set
-            {
-                Set(ref _scrollToVm, value);
-            }
+            base.ExecuteDrop(o);
         }
 
-        public bool AllowDrop { get => _allowDrop; set => Set(ref _allowDrop, value); }
 
-        public ICommand DragOverCommand => _dragOverCommand ??= new Command((o) => ExecuteDraggingOver(o));
-        public ICommand DropCommand => _dropCommand ??= new Command((o) => ExecuteDrop(o));
-
+        public IScrollItem ScrollToVm { get => _scrollToVm; set => Set(ref _scrollToVm, value); }
     }
+
 }
